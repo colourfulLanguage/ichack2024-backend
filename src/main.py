@@ -1,7 +1,7 @@
 from fastapi import FastAPI, WebSocket
-from game_state import GameState, SongSelectPayload, init_game_state
-from receive_audio import handle_audio
-from receive_text import handle_text
+from src.game_state import GameState, SongSelectPayload, init_game_state
+from src.receive_audio import handle_audio
+from src.receive_text import handle_text
 
 app = FastAPI()
 
@@ -14,6 +14,8 @@ async def root():
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+
+    game_state = init_game_state()
 
     while True:
         event = await websocket.recieve()

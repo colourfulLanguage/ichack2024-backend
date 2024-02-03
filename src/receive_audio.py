@@ -4,7 +4,7 @@ File for implementation for receiving websocket audio
 import numpy as np
 from scipy.signal import find_peaks
 
-from utils import note_frequencies, closest_value
+from src.utils import note_frequencies, closest_value
 
 
 def handle_audio(data):
