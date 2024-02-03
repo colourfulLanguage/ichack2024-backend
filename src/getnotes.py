@@ -4,7 +4,7 @@ from io import BytesIO
 from pydub.playback import play
 from bs4 import BeautifulSoup
 
-file_path = 'piano_chromatic_scale.mp3'
+file_path = 'data/piano_chromatic_scale.mp3'
 
 try:
     with open(file_path, 'rb') as file:
