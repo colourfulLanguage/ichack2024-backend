@@ -1,7 +1,16 @@
 from fastapi import FastAPI, WebSocket
-from game_state import GameState, SongSelectPayload, init_game_state
-from receive_audio import handle_audio
-from receive_text import handle_text
+from sing_game import handle_sing_input, new_sing_state
+from listen_game import handle_listen_input, new_listen_state
+from schemas import (
+    WebsocketRecievePayload,
+    WebsocketSendPayload,
+    ListenGameInit,
+    ListenGameState,
+    ListenUserInput,
+    SingGameInit,
+    SingGameState,
+    SingUserInput,
+)
 
 app = FastAPI()
 
@@ -15,28 +24,35 @@ async def root():
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
+    listen_game_state = None
+    sing_game_state = None
+
     while True:
-        event = websocket.recieve()
+        event = websocket.receive()
+        event_model = WebsocketRecievePayload(**event)
 
-        if data := event.get("bytes"):
-            return handle_audio(data)
-        if data := event.get("text"):
-            return handle_text(data)
+        # Initialise State
+        if event_model.message_type == "INIT":
+            if event_model.game_type == "LISTEN":
+                listen_game_state = new_listen_state(event_model.listen_game_init)
+            if event_model.game_type == "SING":
+                sing_game_state = new_sing_state(event_model.sing_game_init)
 
+        # Handle input and update state.
+        if event_model.message_type == "UPDATE":
+            if event_model.game_type == "LISTEN":
 
-@app.get("/game_state")
-async def get_game_state():
-    pass
+                # UPDATE STATE BASED ON INPUT
+                listen_game_state = handle_listen_input(
+                    listen_game_state, event_model.listen_user_input
+                )
+            if event_model.game_type == "SING":
 
+                # UPDATE STATE BASED ON INPUT
+                sing_game_state = handle_sing_input(
+                    sing_game_state, event_model.sing_user_input
+                )
 
-@app.post("/game_state")
-async def post_game_state(game_state: GameState):
-    pass
-
-
-@app.post("/song_select")
-async def post_song_select(song_select: SongSelectPayload):
-    pass
 
 @app.get("/ping")
 async def ping():
