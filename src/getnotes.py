@@ -4,7 +4,7 @@ from io import BytesIO
 from pydub.playback import play
 from bs4 import BeautifulSoup
 
-file_path = 'piano_chromatic_scale.mp3'
+file_path = 'src/piano_chromatic_scale.mp3'
 
 try:
     with open(file_path, 'rb') as file:
@@ -19,6 +19,11 @@ def cut_audio(audio, start_ms, end_ms):
     print(cut_segment)
     return cut_segment
 
-for i in range(0, 12):
-    note = cut_audio(audio_bytes, 1000*i, 1000*(i+1))
+for i in range(0, 7):
+    #note = cut_audio(audio_bytes, 1000*i, 1000*(i+1))
+    #play(note)
+    pass
+
+for i in range(7, 11):
+    note = cut_audio(audio_bytes, 1100*i, 1100*(i+1))
     play(note)

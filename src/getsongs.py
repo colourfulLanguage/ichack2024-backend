@@ -16,7 +16,7 @@ def search_track(query):
     return search_results
 
 # Usage
-results = search_track('Faure: Requiem') #put title of song you are searching in frontend
+results = search_track('Classical Guitar') #put title of song you are searching in frontend
 
 url = results['data'][0]['link'] #return link acquired
 print(url)
@@ -75,19 +75,31 @@ def get_audio_url(html_content):
     audio_url = soup.find('meta', {'property': 'og:audio'})['content']
     return audio_url
 
-def download_and_play_audio(audio_url, start_ms, end_ms):
+def download_and_play_audio(audio_url, start_ms, end_ms, testing=True):
     audio_bytes = requests.get(audio_url).content
+
+    # Turn into audio
     audio_segment = AudioSegment.from_file(BytesIO(audio_bytes), format="mp3")
+
+    # Cut the segment to a certain interval based on realtime data
     cut_segment = audio_segment[start_ms:end_ms]
-    print(cut_segment)
-    play(cut_segment)
+    cut_bytesio = BytesIO()
+    cut_segment.export(cut_bytesio, format="mp3")
+    cut_bytes = cut_bytesio.getvalue() #get bytes data
+
+    if testing:
+        play(cut_segment)
+    else:
+        pass
+
+    return cut_bytes
 
 html_bytes = requests.get(url).content
 audio_url = get_audio_url(html_bytes)
 
 import time
 start = time.time()
-download_and_play_audio(audio_url, 20000, 60000)
+cut_bytes = download_and_play_audio(audio_url, 20000, 60000)
 end = time.time()
 
 print(- start + end)
