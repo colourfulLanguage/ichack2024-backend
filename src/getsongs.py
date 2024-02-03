@@ -19,57 +19,8 @@ def search_track(query):
 results = search_track('Classical Guitar') #put title of song you are searching in frontend
 
 url = results['data'][0]['link'] #return link acquired
-print(url)
-#get soundbites
-def get_audio_bytes(url):
-    try:
-        # Make an HTTP GET request to the URL
-        response = requests.get(url)
 
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200:
-            # Retrieve the content in bytes
-            audio_bytes = response.content
-            return audio_bytes
-        else:
-            print(f"Error: Unable to fetch audio content. Status code: {response.status_code}")
-            return None
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
-def cut_audio_bytes(audio_bytes, start_ms, end_ms):
-    try:
-        # Convert the bytes to AudioSegment
-        audio_segment = AudioSegment.from_file(BytesIO(audio_bytes), format="mp3")
-
-        # Cut the audio segment
-        cut_segment = audio_segment[start_ms:end_ms]
-
-        # Export the cut segment to bytes
-        cut_bytes = cut_segment.export(format="mp3").read()
-
-        return cut_bytes
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
-def cut_and_play_audio(audio_bytes, start_ms, end_ms):
-    try:
-        # Convert the bytes to AudioSegment
-        audio_segment = AudioSegment.from_file(BytesIO(audio_bytes), format="mp3")
-
-        # Cut the audio segment
-        cut_segment = audio_segment[start_ms:end_ms]
-
-        # Play the cut segment
-        play(cut_segment)
-
-    except Exception as e:
-        print(f"Error: {e}")
-
+#Get soundbites
 def get_audio_url(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
     audio_url = soup.find('meta', {'property': 'og:audio'})['content']
