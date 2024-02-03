@@ -19,5 +19,6 @@ def cut_audio(audio, start_ms, end_ms):
     print(cut_segment)
     return cut_segment
 
-note = cut_audio(audio_bytes, 1, 20)
-play(note)
+for i in range(0, 12):
+    note = cut_audio(audio_bytes, 1000*i, 1000*(i+1))
+    play(note)
