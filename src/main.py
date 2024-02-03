@@ -1,7 +1,18 @@
 from fastapi import FastAPI, WebSocket
-from game_state import GameState, SongSelectPayload, init_game_state
-from receive_audio import handle_audio
-from receive_text import handle_text
+from sing_game import handle_sing_input, new_sing_state
+from listen_game import handle_listen_input, new_listen_state
+from getsongs import query_dict
+from schemas import (
+    WebsocketRecievePayload,
+    WebsocketSendPayload,
+    ListenGameInit,
+    ListenGameState,
+    ListenUserInput,
+    SingGameInit,
+    SingGameState,
+    SingUserInput,
+)
+from starlette.websockets import WebSocketState
 
 app = FastAPI()
 
@@ -16,27 +27,43 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
     while True:
-        event = websocket.recieve()
+        print(websocket.client_state)
 
-        if data := event.get("bytes"):
-            return handle_audio(data)
-        if data := event.get("text"):
-            return handle_text(data)
+        if websocket.client_state == WebSocketState.DISCONNECTED:
+            print(f"Client disconnected [{websocket.client_state}]")
+            return
+
+        event = await websocket.receive()
+
+        event_model = WebsocketRecievePayload(**event)
+
+        # Initialise State
+        if event_model.message_type == "INIT":
+            if event_model.game_type == "LISTEN":
+                listen_game_state = new_listen_state(event_model.listen_game_init)
+            if event_model.game_type == "SING":
+                sing_game_state = new_sing_state(event_model.sing_game_init)
+
+        # Handle input and update state.
+        if event_model.message_type == "UPDATE":
+            if event_model.game_type == "LISTEN":
+
+                # UPDATE STATE BASED ON INPUT
+                listen_game_state = handle_listen_input(
+                    listen_game_state, event_model.listen_user_input
+                )
+            if event_model.game_type == "SING":
+
+                # UPDATE STATE BASED ON INPUT
+                sing_game_state = handle_sing_input(
+                    sing_game_state, event_model.sing_user_input
+                )
 
 
-@app.get("/game_state")
-async def get_game_state():
-    pass
+@app.get("/song_names")
+async def song_names():
+    return {"names": list(query_dict.keys())}
 
-
-@app.post("/game_state")
-async def post_game_state(game_state: GameState):
-    pass
-
-
-@app.post("/song_select")
-async def post_song_select(song_select: SongSelectPayload):
-    pass
 
 @app.get("/ping")
 async def ping():
