@@ -11,6 +11,7 @@ from schemas import (
     SingGameState,
     SingUserInput,
 )
+from starlette.websockets import WebSocketState
 
 app = FastAPI()
 
@@ -22,6 +23,7 @@ async def root():
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+
     await websocket.accept()
 
     listen_game_state = None
@@ -32,7 +34,7 @@ async def websocket_endpoint(websocket: WebSocket):
         event = await websocket.receive()
         print("Recieved")
         print(event)
-        if event["type"] == "websocket.disconnect":
+        if websocket.client_state == WebSocketState.DISCONNECTED:
             print("Disconnected")
             return
 
