@@ -1,6 +1,7 @@
 from fastapi import FastAPI, WebSocket
 from sing_game import handle_sing_input, new_sing_state
 from listen_game import handle_listen_input, new_listen_state
+from getsongs import query_dict
 from schemas import (
     WebsocketRecievePayload,
     WebsocketSendPayload,
@@ -23,20 +24,16 @@ async def root():
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-
     await websocket.accept()
 
-    listen_game_state = None
-    sing_game_state = None
-
     while True:
-        print("Waiting")
-        event = await websocket.receive()
-        print("Recieved")
-        print(event)
+        print(websocket.client_state)
+
         if websocket.client_state == WebSocketState.DISCONNECTED:
-            print("Disconnected")
+            print(f"Client disconnected [{websocket.client_state}]")
             return
+
+        event = await websocket.receive()
 
         event_model = WebsocketRecievePayload(**event)
 
@@ -61,6 +58,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 sing_game_state = handle_sing_input(
                     sing_game_state, event_model.sing_user_input
                 )
+
+
+@app.get("/song_names")
+async def song_names():
+    return {"names": list(query_dict.keys())}
 
 
 @app.get("/ping")
