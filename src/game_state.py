@@ -8,3 +8,8 @@ class GameState(BaseModel):
 class SongSelectPayload(BaseModel):
 
     name: str
+
+
+def init_game_state() -> GameState:
+    state = GameState()
+    return state
