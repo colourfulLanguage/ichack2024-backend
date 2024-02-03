@@ -1,5 +1,5 @@
 from fastapi import FastAPI, WebSocket
-from game_state import GameState
+from game_state import GameState, SongSelectPayload
 
 app = FastAPI()
 
@@ -21,4 +21,9 @@ async def get_game_state():
 
 @app.post("/game_state")
 async def post_game_state(game_state: GameState):
+    pass
+
+
+@app.post("/song_select")
+async def post_song_select(song_select: SongSelectPayload):
     pass
