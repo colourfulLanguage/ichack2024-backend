@@ -4,6 +4,7 @@ from io import BytesIO
 from pydub.playback import play
 from bs4 import BeautifulSoup
 
+
 # Deezer API key
 api_key = 'ea4dcc8d4e5393ca37b7cfc53147a0f0'
 
@@ -15,61 +16,7 @@ def search_track(query):
     search_results = response.json()
     return search_results
 
-# Usage
-results = search_track('Classical Guitar') #put title of song you are searching in frontend
-
-url = results['data'][0]['link'] #return link acquired
-print(url)
-#get soundbites
-def get_audio_bytes(url):
-    try:
-        # Make an HTTP GET request to the URL
-        response = requests.get(url)
-
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200:
-            # Retrieve the content in bytes
-            audio_bytes = response.content
-            return audio_bytes
-        else:
-            print(f"Error: Unable to fetch audio content. Status code: {response.status_code}")
-            return None
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
-def cut_audio_bytes(audio_bytes, start_ms, end_ms):
-    try:
-        # Convert the bytes to AudioSegment
-        audio_segment = AudioSegment.from_file(BytesIO(audio_bytes), format="mp3")
-
-        # Cut the audio segment
-        cut_segment = audio_segment[start_ms:end_ms]
-
-        # Export the cut segment to bytes
-        cut_bytes = cut_segment.export(format="mp3").read()
-
-        return cut_bytes
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
-def cut_and_play_audio(audio_bytes, start_ms, end_ms):
-    try:
-        # Convert the bytes to AudioSegment
-        audio_segment = AudioSegment.from_file(BytesIO(audio_bytes), format="mp3")
-
-        # Cut the audio segment
-        cut_segment = audio_segment[start_ms:end_ms]
-
-        # Play the cut segment
-        play(cut_segment)
-
-    except Exception as e:
-        print(f"Error: {e}")
-
+#Get soundbites
 def get_audio_url(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
     audio_url = soup.find('meta', {'property': 'og:audio'})['content']
@@ -79,12 +26,12 @@ def download_and_play_audio(audio_url, start_ms, end_ms, testing=True):
     audio_bytes = requests.get(audio_url).content
 
     # Turn into audio
-    audio_segment = AudioSegment.from_file(BytesIO(audio_bytes), format="mp3")
+    audio_segment = AudioSegment.from_file(BytesIO(audio_bytes))
 
     # Cut the segment to a certain interval based on realtime data
     cut_segment = audio_segment[start_ms:end_ms]
     cut_bytesio = BytesIO()
-    cut_segment.export(cut_bytesio, format="mp3")
+    cut_segment.export(cut_bytesio, format="wav")
     cut_bytes = cut_bytesio.getvalue() #get bytes data
 
     if testing:
@@ -94,16 +41,48 @@ def download_and_play_audio(audio_url, start_ms, end_ms, testing=True):
 
     return cut_bytes
 
-html_bytes = requests.get(url).content
-audio_url = get_audio_url(html_bytes)
+def get_song_and_key(name):
 
-import time
-start = time.time()
-cut_bytes = download_and_play_audio(audio_url, 20000, 60000)
-end = time.time()
+    query_dict = {
+        "C major": "Let It Be",
+        "G major": "Part of Your World",
+        "D major": "Hotel California",
+        "A major": "I want it that Way",
+        "E major": "Under the Bridge",
+        "B major": "Poker Face",
+        "F# major": "Born This Way",
+        "Db major": "Nocturne",
+        "Ab major": "All of Me",
+        "Eb major": "Titanium",
+        "Bb major": "Allegro",
+        "F major": "Yellow Submarine"
+    }
 
-print(- start + end)
+    song_names = []
+    for key in query_dict:
+        song_names.append(query_dict[key])
 
-#TODO get it to identify which key the song is in
-#TODO put in websocket.send
+    print(song_names)
+    if name in song_names:
+        results = search_track(name) #put title of song you are searching in frontend
+        key = [i for i in query_dict if query_dict[i] == name] # gets the key
+        print(key)
+    else:
+        raise ValueError("invalid name")
+
+    url = results['data'][0]['link'] #return link acquired
+
+    html_bytes = requests.get(url).content
+    audio_url = get_audio_url(html_bytes)
+
+    cut_bytes = download_and_play_audio(audio_url, 20000, 60000)
+
+    data_dict = {f"{key}": cut_bytes}
+
+    return data_dict
+
+get_song_and_key("Let It Be")
+
+
+
 
