@@ -16,10 +16,11 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
     while True:
-        event = websocket.recieve()
+        event = await websocket.recieve()
 
         if data := event.get("bytes"):
-            return handle_audio(data)
+            response = handle_audio(data)
+            await websocket.send(response)
         if data := event.get("text"):
             return handle_text(data)
 
