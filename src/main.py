@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket
 from src.game_state import GameState, SongSelectPayload, init_game_state
 from src.receive_audio import handle_audio
 from src.receive_text import handle_text
+from starlette.websockets import WebSocketState
 
 app = FastAPI()
 
@@ -18,13 +19,19 @@ async def websocket_endpoint(websocket: WebSocket):
     game_state = init_game_state()
 
     while True:
-        event = await websocket.receive()
+        print(websocket.client_state)
 
+        if websocket.client_state == WebSocketState.DISCONNECTED:
+            print(f"Client disconnected [{websocket.client_state}]")
+            return
+
+        event = await websocket.receive()
+        print(event)
         if data := event.get("bytes"):
             response = handle_audio(data)
             await websocket.send(response)
         if data := event.get("text"):
-            return handle_text(data)
+            handle_text(data)
 
 
 @app.get("/game_state")
@@ -43,4 +50,4 @@ async def post_song_select(song_select: SongSelectPayload):
 
 @app.get("/ping")
 async def ping():
-    app.post("Backend says pong")
+    return {"message": "pong"}
