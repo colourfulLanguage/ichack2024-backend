@@ -79,8 +79,6 @@ def get_song_and_key(name):
 
     return data
 
-get_song_and_key("Let It Be")
-
 
 
 
