@@ -28,7 +28,14 @@ async def websocket_endpoint(websocket: WebSocket):
     sing_game_state = None
 
     while True:
-        event = websocket.receive()
+        print("Waiting")
+        event = await websocket.receive()
+        print("Recieved")
+        print(event)
+        if event["type"] == "websocket.disconnect":
+            print("Disconnected")
+            return
+
         event_model = WebsocketRecievePayload(**event)
 
         # Initialise State
