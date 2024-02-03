@@ -77,9 +77,9 @@ def get_song_and_key(name):
 
     cut_bytes = download_and_play_audio(audio_url, 20000, 60000)
 
-    data_dict = {f"{key}": cut_bytes}
+    data = [key, cut_bytes]
 
-    return data_dict
+    return data
 
 get_song_and_key("Let It Be")
 
