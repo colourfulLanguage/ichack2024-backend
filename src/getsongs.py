@@ -1,13 +1,9 @@
 import requests
 from pydub import AudioSegment
 from io import BytesIO
-import io
 from pydub.playback import play
 from bs4 import BeautifulSoup
-import base64
-import json
-import librosa
-import numpy as np
+
 
 # Deezer API key
 api_key = 'ea4dcc8d4e5393ca37b7cfc53147a0f0'
@@ -43,37 +39,49 @@ def download_and_play_audio(audio_url, start_ms, end_ms, testing=True):
     else:
         pass
 
-    return audio_bytes, cut_bytes
+    return cut_bytes
 
-query_dict = {{"C major": "Let It Be"},
-        {"G major": "Part of Your World"},
-        {"D major": "Hotel California"},
-        {"A major": "I want it that Way"},
-        {"E major": "Under the Bridge"},
-        {"B major": "Poker Face"},
-        {"F# major": "Born This Way"},
-        {"Db major": "Nocturne"},
-        {"Ab major": "All of Me"},
-        {"Eb major": "Titanium"},
-        {"Bb major": "Allegro"},
-        {"F major": "Yellow Submarine"}
-        }
+def get_song_and_key(name):
 
-song_names = []
-for key in query_dict:
-    song_names.append(query_dict[key])
+    query_dict = {
+        "C major": "Let It Be",
+        "G major": "Part of Your World",
+        "D major": "Hotel California",
+        "A major": "I want it that Way",
+        "E major": "Under the Bridge",
+        "B major": "Poker Face",
+        "F# major": "Born This Way",
+        "Db major": "Nocturne",
+        "Ab major": "All of Me",
+        "Eb major": "Titanium",
+        "Bb major": "Allegro",
+        "F major": "Yellow Submarine"
+    }
 
-name = "Yellow Submarine"
-print(song_names)
-if name in song_names:
-    results = search_track(name) #put title of song you are searching in frontend
+    song_names = []
+    for key in query_dict:
+        song_names.append(query_dict[key])
 
-url = results['data'][0]['link'] #return link acquired
+    print(song_names)
+    if name in song_names:
+        results = search_track(name) #put title of song you are searching in frontend
+        key = [i for i in query_dict if query_dict[i] == name] # gets the key
+        print(key)
+    else:
+        raise ValueError("invalid name")
 
-html_bytes = requests.get(url).content
-audio_url = get_audio_url(html_bytes)
+    url = results['data'][0]['link'] #return link acquired
 
-audio_bytes, cut_bytes = download_and_play_audio(audio_url, 20000, 60000)
+    html_bytes = requests.get(url).content
+    audio_url = get_audio_url(html_bytes)
+
+    cut_bytes = download_and_play_audio(audio_url, 20000, 60000)
+
+    data_dict = {f"{key}": cut_bytes}
+
+    return data_dict
+
+get_song_and_key("Let It Be")
 
 
 
