@@ -18,7 +18,7 @@ async def websocket_endpoint(websocket: WebSocket):
     game_state = init_game_state()
 
     while True:
-        event = await websocket.recieve()
+        event = await websocket.receive()
 
         if data := event.get("bytes"):
             response = handle_audio(data)
