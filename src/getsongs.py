@@ -22,7 +22,7 @@ def get_audio_url(html_content):
     audio_url = soup.find('meta', {'property': 'og:audio'})['content']
     return audio_url
 
-def download_and_play_audio(audio_url, start_ms, end_ms, testing=True):
+def download_and_play_audio(audio_url, start_ms, end_ms, testing=False):
     audio_bytes = requests.get(audio_url).content
 
     # Turn into audio
@@ -62,11 +62,9 @@ def get_song_and_key(name):
     for key in query_dict:
         song_names.append(query_dict[key])
 
-    print(song_names)
     if name in song_names:
         results = search_track(name) #put title of song you are searching in frontend
         key = [i for i in query_dict if query_dict[i] == name] # gets the key
-        print(key)
     else:
         raise ValueError("invalid name")
 
