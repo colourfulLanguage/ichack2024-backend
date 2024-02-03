@@ -1,6 +1,7 @@
 from fastapi import FastAPI, WebSocket
 from sing_game import handle_sing_input, new_sing_state
 from listen_game import handle_listen_input, new_listen_state
+from fastapi.middleware.cors import CORSMiddleware
 from getsongs import query_dict
 from schemas import (
     WebsocketRecievePayload,
@@ -68,3 +69,16 @@ async def song_names():
 @app.get("/ping")
 async def ping():
     app.post("Backend says pong")
+
+
+origins = [
+    "http://localhost:3000",  # Adjust the port if your frontend runs on a different one
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allows specified origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
