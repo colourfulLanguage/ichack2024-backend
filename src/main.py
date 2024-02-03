@@ -37,3 +37,7 @@ async def post_game_state(game_state: GameState):
 @app.post("/song_select")
 async def post_song_select(song_select: SongSelectPayload):
     pass
+
+@app.get("/ping")
+async def ping():
+    app.post("Backend says pong")
