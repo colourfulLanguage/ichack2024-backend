@@ -40,8 +40,9 @@ async def websocket_endpoint(websocket: WebSocket):
             return
 
         event = await websocket.receive()
-        print("Event received")
+        print("Event received", event["text"])
         payload = json.loads(event["text"])
+        print("Payload", payload)
         event_model = WebsocketRecievePayload(**payload)
         print("Event model created")
 
