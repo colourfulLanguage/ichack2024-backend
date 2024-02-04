@@ -27,6 +27,8 @@ class SingGameState(BaseModel):
     actual_note: str
     actual_bytes: str
     user_note: Optional[str]
+    expected_freq: float
+    diff_freq: float
 
 
 class SingGameInit(BaseModel):
