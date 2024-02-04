@@ -1,10 +1,14 @@
 from schemas import SingUserInput, SingGameState
-from utils import b64_to_webm, webm_to_wav
+from utils import b64_to_webm, webm_to_wav, note_frequencies
 import io
+import random
 
 
 def new_sing_state(websocket, sing_game_init):
-    state = SingGameState(actual_key="C", user_audio_key=b"")
+
+    actual_note = random.choice(list(note_frequencies.keys()))
+
+    state = SingGameState(actual_note=actual_note, user_audio_key=b"")
     return state
 
 

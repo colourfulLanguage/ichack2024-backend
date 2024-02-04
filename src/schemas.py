@@ -30,8 +30,7 @@ class SingGameState(BaseModel):
 
 
 class SingGameInit(BaseModel):
-    audio_key: dict
-    actual_note: str
+    pass
 
 
 """
