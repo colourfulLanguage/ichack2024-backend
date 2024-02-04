@@ -29,21 +29,17 @@ async def root():
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
-    sing_game_state = SingGameState(
-        actual_bytes="", actual_note="", diff_freq=0.0, expected_freq=0.0, user_note=""
-    )
-    listen_game_state = ListenGameState(
-        song_bytes="", song_key="", song_name="", user_identified_correctly=None
-    )
+    sing_game_state = {}
+    listen_game_state = {}
 
     while True:
         print(websocket.client_state)
-
+        event = await websocket.receive()
         if websocket.client_state == WebSocketState.DISCONNECTED:
             print(f"Client disconnected [{websocket.client_state}]")
             return
 
-        event = await websocket.receive()
+        print(event)
         print("Event received", event["text"])
         payload = json.loads(event["text"])
         print("Payload", payload)

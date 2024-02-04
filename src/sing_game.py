@@ -52,6 +52,7 @@ async def handle_sing_input(websocket, state, input):
 async def freq(state, start_time=0, end_time=100):
 
     b64_audio = state.user_audio_bytes
+
     webm_audio = b64_to_webm(b64_audio)
     wav_audio = webm_to_wav(webm_audio)
 
@@ -67,7 +68,7 @@ async def freq(state, start_time=0, end_time=100):
     else:
         pass
     # Return a slice of the data from start_time to end_time (now backwards)
-    data_to_read = data[-int(end_time * sr / 1000) - 1 : -int(start_time * sr / 1000)]
+    data_to_read = data[int(start_time * sr / 1000) : int(end_time * sr / 1000) + 1]
 
     # Fourier Transform
     N = len(data_to_read)
