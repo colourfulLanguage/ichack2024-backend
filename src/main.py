@@ -29,8 +29,12 @@ async def root():
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
-    sing_game_state = {}
-    listen_game_state = {}
+    sing_game_state = SingGameState(
+        actual_bytes="", actual_note="", diff_freq=0.0, expected_freq=0.0, user_note=""
+    )
+    listen_game_state = ListenGameState(
+        song_bytes="", song_key="", song_name="", user_identified_correctly=None
+    )
 
     while True:
         print(websocket.client_state)
