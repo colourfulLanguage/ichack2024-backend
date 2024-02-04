@@ -37,6 +37,7 @@ async def handle_sing_input(websocket, state, input):
     freq_and_note = await freq(input)
     state.user_note = freq_and_note["note"]
     print("User note detected as ", state.user_note)
+    state.freq_diff = state.expected_freq - freq_and_note["freq"]
 
     payload = WebsocketSendPayload(
         game_type="SING", sing_game_state=state, listen_game_state=None
