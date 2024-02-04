@@ -1,14 +1,27 @@
-from schemas import SingUserInput, SingGameState
+from schemas import SingUserInput, SingGameState, WebsocketSendPayload
 from utils import b64_to_webm, webm_to_wav, note_frequencies
 import io
 import random
 
 
-def new_sing_state(websocket, sing_game_init):
+async def new_sing_state(websocket, sing_game_init):
 
-    actual_note = random.choice(list(note_frequencies.keys()))
+    actual_note = random.choice(list(note_frequencies.values()))
 
-    state = SingGameState(actual_note=actual_note, user_audio_key=b"")
+    # TODO - get actual bytes from somewhere
+    actual_bytes = ""
+
+    print(actual_note)
+
+    state = SingGameState(
+        actual_note=actual_note, actual_bytes=actual_bytes, user_note=""
+    )
+
+    payload = WebsocketSendPayload(
+        game_type="SING", sing_game_state=state, listen_game_state=None
+    )
+    await websocket.send_json(payload.model_dump_json())
+
     return state
 
 
@@ -20,11 +33,19 @@ from utils import closest_value, note_frequencies
 import asyncio
 
 
-async def handle_sing_input(webocket, state, input):
+async def handle_sing_input(websocket, state, input):
     print("Received audio")
     freq_and_note = await freq(input)
     state.user_note = freq_and_note["note"]
     print("User note detected as ", state.user_note)
+
+    print(state.model_dump_json())
+
+    payload = WebsocketSendPayload(
+        game_type="SING", sing_game_state=state, listen_game_state=None
+    )
+    await websocket.send_json(payload.model_dump_json())
+
     return state
 
 
