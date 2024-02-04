@@ -4,7 +4,7 @@ from getsongs import get_song_and_key
 
 def new_listen_state(websocket, listen_game_init):
 
-    key, bytes_ = get_song_and_key(listen_game_state.song_name)
+    key, bytes_ = get_song_and_key(listen_game_init.song_name)
 
     listen_game_state = ListenGameState(
         listen_game_init.song_name, song_bytes=bytes_, song_key=key
