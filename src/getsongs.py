@@ -8,6 +8,21 @@ from bs4 import BeautifulSoup
 # Deezer API key
 api_key = 'ea4dcc8d4e5393ca37b7cfc53147a0f0'
 
+query_dict = {
+        "C major": "Let It Be",
+        "G major": "Part of Your World",
+        "D major": "Hotel California",
+        "A major": "I want it that Way",
+        "E major": "Under the Bridge",
+        "B major": "Poker Face",
+        "F# major": "Born This Way",
+        "Db major": "Nocturne",
+        "Ab major": "All of Me",
+        "Eb major": "Titanium",
+        "Bb major": "Allegro",
+        "F major": "Yellow Submarine"
+    }
+
 # search for a track
 def search_track(query):
     search_url = f'https://api.deezer.com/search'
@@ -42,22 +57,6 @@ def download_and_play_audio(audio_url, start_ms, end_ms, testing=False):
     return cut_bytes
 
 def get_song_and_key(name):
-
-    query_dict = {
-        "C major": "Let It Be",
-        "G major": "Part of Your World",
-        "D major": "Hotel California",
-        "A major": "I want it that Way",
-        "E major": "Under the Bridge",
-        "B major": "Poker Face",
-        "F# major": "Born This Way",
-        "Db major": "Nocturne",
-        "Ab major": "All of Me",
-        "Eb major": "Titanium",
-        "Bb major": "Allegro",
-        "F major": "Yellow Submarine"
-    }
-
     song_names = []
     for key in query_dict:
         song_names.append(query_dict[key])
