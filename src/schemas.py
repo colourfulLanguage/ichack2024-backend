@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from typing import Optional
 
 # LISTEN SCHEMAS
 class ListenUserInput(BaseModel):
@@ -45,11 +45,11 @@ class WebsocketRecievePayload(BaseModel):
     # INIT / UPDATE
     message_type: str
 
-    sing_user_input: SingUserInput | None
-    listen_user_input: ListenUserInput | None
+    sing_user_input: Optional[SingUserInput]
+    listen_user_input: Optional[ListenUserInput]
 
-    listen_game_init: ListenGameInit | None
-    sing_game_init: SingGameInit | None
+    listen_game_init: Optional[ListenGameInit]
+    sing_game_init: Optional[SingGameInit]
 
 
 """
@@ -62,5 +62,5 @@ class WebsocketSendPayload(BaseModel):
     # LISTEN / SING
     game_type: str
 
-    sing_game_state: SingGameState | None
-    listen_game_state: ListenGameState | None
+    sing_game_state: Optional[SingGameState]
+    listen_game_state: Optional[ListenGameState]

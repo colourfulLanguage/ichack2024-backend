@@ -1,3 +1,5 @@
+import json
+
 from fastapi import FastAPI, WebSocket
 from sing_game import handle_sing_input, new_sing_state
 from listen_game import handle_listen_input, new_listen_state
@@ -36,6 +38,12 @@ async def websocket_endpoint(websocket: WebSocket):
 
         event = await websocket.receive()
 
+        print(event)
+        print(type(event))
+        print(type(json.loads(event["text"])))
+
+        event = json.loads(event["text"])
+        print(event)
         event_model = WebsocketRecievePayload(**event)
 
         # Initialise State
