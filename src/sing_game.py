@@ -1,11 +1,7 @@
 from schemas import SingUserInput, SingGameState
 from utils import b64_to_webm, webm_to_wav
 import io
-
-
-def new_sing_state(websocket, sing_game_init):
-    state = SingGameState(actual_key="C", user_audio_key=b"")
-    return state
+from getnotes import get_note
 
 
 from scipy.fft import *
@@ -16,7 +12,18 @@ from utils import closest_value, note_frequencies
 import asyncio
 
 
-async def handle_sing_input(webocket, state, input):
+def new_sing_state(websocket):
+    # retrieve bytes
+    note_name, note_bytes, expected_freq = get_note()
+    sing_game_state = SingGameState(
+        note_name=note_name, note_bytes=note_bytes, expected_freq=expected_freq
+    )
+    websocket.send(sing_game_state.model_dump_json())
+
+    return sing_game_state
+
+
+async def handle_sing_input(websocket, state, input):
     print("Received audio")
     freq_and_note = await freq(input)
     state.user_note = freq_and_note["note"]
