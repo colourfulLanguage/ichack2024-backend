@@ -1,4 +1,6 @@
 from schemas import SingUserInput, SingGameState
+from utils import b64_to_webm, webm_to_wav
+import io
 
 
 def new_sing_state(websocket, sing_game_init):
@@ -17,14 +19,24 @@ import asyncio
 async def handle_sing_input(webocket, state, input):
     print("Received audio")
     freq_and_note = await freq(input)
-    state = freq_and_note["freq"]
+    state.user_note = freq_and_note["note"]
+    print("User note detected as ", state.user_note)
     return state
 
 
 async def freq(state, start_time=0, end_time=100):
 
-    print("running freq")
-    sr, data = wavfile.read("data/400hz.wav")
+    b64_audio = state.user_audio_bytes
+    webm_audio = b64_to_webm(b64_audio)
+    wav_audio = webm_to_wav(webm_audio)
+
+    with open("output.webm", "wb") as audio_file:
+        audio_file.write(webm_audio)
+    with open("output.wav", "wb") as audio_file:
+        audio_file.write(wav_audio)
+
+    virtual_bytes_file = io.BytesIO(wav_audio)
+    sr, data = wavfile.read(virtual_bytes_file)
     if data.ndim > 1:
         data = data[:, 0]
     else:
