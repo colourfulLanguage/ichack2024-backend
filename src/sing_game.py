@@ -66,8 +66,8 @@ async def freq(state, start_time=0, end_time=100):
         data = data[:, 0]
     else:
         pass
-    # Return a slice of the data from start_time to end_time
-    data_to_read = data[int(start_time * sr / 1000) : int(end_time * sr / 1000) + 1]
+    # Return a slice of the data from start_time to end_time (now backwards)
+    data_to_read = data[-int(end_time * sr / 1000) - 1 : -int(start_time * sr / 1000)]
 
     # Fourier Transform
     N = len(data_to_read)
