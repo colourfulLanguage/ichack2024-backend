@@ -63,7 +63,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/song_names")
 async def song_names():
-    return {"names": list(query_dict.keys())}
+    return {"names": list(query_dict.values())}
 
 
 @app.get("/ping")
