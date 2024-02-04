@@ -1,7 +1,7 @@
 from schemas import SingUserInput, SingGameState
 
 
-def new_sing_state(sing_game_init):
+def new_sing_state(websocket, sing_game_init):
     state = SingGameState(actual_key="C", user_audio_key=b"")
     return state
 
@@ -14,14 +14,16 @@ from utils import closest_value, note_frequencies
 import asyncio
 
 
-async def handle_sing_input(state, input):
+async def handle_sing_input(webocket, state, input):
     print("Received audio")
     freq_and_note = await freq(input)
     state = freq_and_note["freq"]
     return state
 
 
-async def freq(file=None, start_time=0, end_time=100):
+async def freq(state, start_time=0, end_time=100):
+
+    print("running freq")
     sr, data = wavfile.read("data/400hz.wav")
     if data.ndim > 1:
         data = data[:, 0]
@@ -55,7 +57,6 @@ async def main():
         print("No clear peak found in the audio data.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-

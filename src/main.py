@@ -29,6 +29,9 @@ async def root():
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
+    sing_game_state = {}
+    listen_game_state = {}
+
     while True:
         print(websocket.client_state)
 
@@ -37,35 +40,39 @@ async def websocket_endpoint(websocket: WebSocket):
             return
 
         event = await websocket.receive()
-
-        print(event)
-        print(type(event))
-        print(type(json.loads(event["text"])))
-
-        event = json.loads(event["text"])
-        print(event)
-        event_model = WebsocketRecievePayload(**event)
+        print("Event received")
+        payload = json.loads(event["text"])
+        event_model = WebsocketRecievePayload(**payload)
+        print("Event model created")
 
         # Initialise State
         if event_model.message_type == "INIT":
+            print("Initialising")
             if event_model.game_type == "LISTEN":
-                listen_game_state = new_listen_state(event_model.listen_game_init)
+                print("Initialising Listen")
+                listen_game_state = await new_listen_state(
+                    websocket, event_model.listen_game_init
+                )
             if event_model.game_type == "SING":
-                sing_game_state = new_sing_state(event_model.sing_game_init)
+                print("Initialising Sing")
+                sing_game_state = await new_sing_state(
+                    websocket, event_model.sing_game_init
+                )
 
         # Handle input and update state.
         if event_model.message_type == "UPDATE":
+            print("Updating")
             if event_model.game_type == "LISTEN":
-
+                print("Updating Listen")
                 # UPDATE STATE BASED ON INPUT
-                listen_game_state = handle_listen_input(
-                    listen_game_state, event_model.listen_user_input
+                listen_game_state = await handle_listen_input(
+                    websocket, listen_game_state, event_model.listen_user_input
                 )
             if event_model.game_type == "SING":
-
+                print("Updating sing")
                 # UPDATE STATE BASED ON INPUT
-                sing_game_state = handle_sing_input(
-                    sing_game_state, event_model.sing_user_input
+                sing_game_state = await handle_sing_input(
+                    websocket, sing_game_state, event_model.sing_user_input
                 )
 
 

@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 # LISTEN SCHEMAS
 class ListenUserInput(BaseModel):
     user_identified_key: str
@@ -8,9 +9,9 @@ class ListenUserInput(BaseModel):
 
 class ListenGameState(BaseModel):
     song_name: str
-    song_bytes: bytes
+    song_bytes: str
     song_key: str
-    user_identified_correctly: bool | None
+    user_identified_correctly: Optional[bool]
 
 
 class ListenGameInit(BaseModel):
@@ -19,13 +20,13 @@ class ListenGameInit(BaseModel):
 
 # SING SCHEMAS
 class SingUserInput(BaseModel):
-    user_audio_bytes: bytes
+    user_audio_bytes: str
 
 
 class SingGameState(BaseModel):
     audio_key: dict
     actual_note: str
-    user_note: str | None
+    user_note: Optional[str]
 
 
 class SingGameInit(BaseModel):
