@@ -24,8 +24,8 @@ class SingUserInput(BaseModel):
 
 
 class SingGameState(BaseModel):
-    audio_key: dict
     actual_note: str
+    actual_bytes: str
     user_note: Optional[str]
 
 
