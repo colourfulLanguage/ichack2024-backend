@@ -15,3 +15,6 @@ To uninstall dependencies:
 
 To run app:
 1. `uvicorn src.main:app --reload`
+
+FRONTEND REPO
+https://github.com/colourfulLanguage/ichack2024-frontend

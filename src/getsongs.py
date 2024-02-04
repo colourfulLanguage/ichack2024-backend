@@ -40,7 +40,7 @@ def get_audio_url(html_content):
     return audio_url
 
 
-def download_and_play_audio(audio_url, start_ms, end_ms, testing=False):
+def download_and_play_audio(audio_url, start_ms, end_ms, testing=True):
     audio_bytes = requests.get(audio_url).content
 
     # Turn into audio
